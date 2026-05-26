@@ -76,15 +76,18 @@ func (c complexNum) processPartOne(iterations int, A complexNum) complexNum {
 	return result
 }
 
-func (c complexNum) processPartTwo(iterations int) complexNum {
+func (c complexNum) isValidEngraving(iterations, boundaryMin, boundaryMax int) bool {
 	result := complexNum{x: 0, y: 0}
 	divisor := complexNum{x: 100000, y: 100000}
 	for range iterations {
 		result = result.multi(result)
 		result = result.div(divisor)
 		result = result.add(c)
+		if !result.isWithinBoundary(boundaryMin, boundaryMax) {
+			return false
+		}
 	}
-	return result
+	return true
 }
 
 func (c complexNum) isWithinBoundary(boundaryMin, boundaryMax int) bool {
@@ -101,7 +104,7 @@ func processGrid(A complexNum, gridSize, cycles, boundaryMin, boundaryMax int) i
 	for row := 0; row <= gridSize; row++ {
 		for col := 0; col <= gridSize; col++ {
 			current := complexNum{x: A.x + col*step, y: A.y + row*step}
-			if current.processPartTwo(cycles).isWithinBoundary(boundaryMin, boundaryMax) {
+			if current.isValidEngraving(cycles, boundaryMin, boundaryMax) {
 				totalWithinBoundary++
 			}
 		}
@@ -118,4 +121,5 @@ func main() {
 
 	A3 := processInput("input-part-3.txt")[0]
 	fmt.Println("Part Three:", processGrid(A3, 1000, 100, -1000000, 1000000))
+
 }
